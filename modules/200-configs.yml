@@ -1,0 +1,5 @@
+name: configs
+type: shell
+commands:
+- cp /usr/share/applications/org.vanillaos.Installer.desktop /etc/skel/.config/autostart/
+- useradd -m -G sudo -s /bin/bash vanilla -p '*'

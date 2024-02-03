@@ -1,0 +1,8 @@
+name: fs-tools
+type: apt
+source:
+  packages:
+    - squashfs-tools
+    - cryptsetup
+    - xfsprogs
+    - parted

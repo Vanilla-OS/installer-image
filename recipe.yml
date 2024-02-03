@@ -1,0 +1,50 @@
+base: ghcr.io/vanilla-os/core:main
+name: Vanilla Installer
+id: vanilla-installer
+labels:
+  maintainer: Vanilla OS Contributors
+args:
+  DEBIAN_FRONTEND: noninteractive
+runs:
+- echo 'APT::Install-Recommends "1";' > /etc/apt/apt.conf.d/01norecommends
+
+modules:
+- name: init-setup
+  type: shell
+  commands:
+  - echo 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"' > /etc/environment
+  - sed -i '4,10d' /etc/profile
+  - apt update
+  - apt upgrade -y
+  - apt clean
+
+- name: packages-modules
+  type: includes
+  includes:
+    - modules/00-vanilla-desktop-base
+    - modules/00-vanilla-backgrounds
+    - modules/00-vanilla-installer
+    - modules/00-vanilla-gnome-default-settings
+    - modules/20-gnome-core
+    - modules/30-gnome-essentials
+    - modules/40-gnome-appearance
+    - modules/50-gnome-common
+    - modules/60-live-boot
+    - modules/70-fs-tools
+    - modules/80-vm-tools
+    - modules/90-accessibility
+    - modules/998-vanilla-cleanup
+    - modules/999-pkg-cleanup
+
+- name: cleanup
+  type: shell
+  commands:
+  - apt autoremove -y
+  - apt clean
+
+- name: cleanup2
+  type: shell
+  commands:
+    - rm -rf /tmp/*
+    - rm -rf /var/tmp/*
+    - rm -rf /sources
