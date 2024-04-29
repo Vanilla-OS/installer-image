@@ -1,6 +1,6 @@
 base: ghcr.io/vanilla-os/core:main
 name: Vanilla Installer
-id: vanilla-installer
+id: installer
 labels:
   maintainer: Vanilla OS Contributors
 args:
