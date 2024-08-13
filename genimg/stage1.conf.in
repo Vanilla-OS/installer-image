@@ -1,0 +1,11 @@
+image efi.img {
+    mountpoint = "/efi"
+    vfat {
+        extraargs = "-F32 -n efi"
+    }
+    size = %EFISIZE%
+}
+image LiveOS/squashfs.img {
+    mountpoint = "/"
+    squashfs {}
+}

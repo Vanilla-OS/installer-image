@@ -8,43 +8,97 @@ args:
 runs:
 - echo 'APT::Install-Recommends "1";' > /etc/apt/apt.conf.d/01norecommends
 
-modules:
-- name: init-setup
-  type: shell
-  commands:
-  - echo 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"' > /etc/environment
-  - sed -i '4,10d' /etc/profile
-  - apt update
-  - apt upgrade -y
-  - apt clean
+stages:
+  - id: build
+    base: ghcr.io/vanilla-os/pico:main
+    singlelayer: false
+    labels:
+      maintainer: Vanilla OS Contributors
+    args:
+      DEBIAN_FRONTEND: noninteractive
+    runs:
+      commands:
+        - echo 'APT::Install-Recommends "1";' > /etc/apt/apt.conf.d/01norecommends
+    modules:
+      - name: init-setup
+        type: shell
+        commands:
+        - echo 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"' > /etc/environment
+        - sed -i '4,10d' /etc/profile
+        - apt update
+        - apt upgrade -y
+        - apt clean
 
-- name: packages-modules
-  type: includes
-  includes:
-    - modules/00-vanilla-desktop-base
-    - modules/00-vanilla-backgrounds
-    - modules/00-vanilla-installer
-    - modules/00-vanilla-gnome-default-settings
-    - modules/20-gnome-core
-    - modules/30-gnome-essentials
-    - modules/40-gnome-appearance
-    - modules/50-gnome-common
-    - modules/60-live-boot
-    - modules/70-fs-tools
-    - modules/80-vm-tools
-    - modules/90-accessibility
-    - modules/998-vanilla-cleanup
-    - modules/999-pkg-cleanup
+      - name: packages-modules
+        type: includes
+        includes:
+          - gh:Vanilla-OS/core-image:main:modules/05-firmware.yml
+          - gh:Vanilla-OS/core-image:main:modules/10-input-and-locale.yml
+          - gh:Vanilla-OS/core-image:main:modules/130-kernel.yml
+          - gh:Vanilla-OS/core-image:main:modules/50-fs.yml
+          - gh:Vanilla-OS/core-image:main:modules/70-compression.yml
+          - gh:Vanilla-OS/core-image:main:modules/90-network.yml
+          - gh:Vanilla-OS/core-image:main:modules/91-iptables.yml
+          - modules/00-vanilla-desktop-base.yml
+          - modules/00-vanilla-backgrounds.yml
+          - modules/00-vanilla-installer.yml
+          - modules/20-gnome.yml
+          - modules/60-live-boot.yml
+          - modules/70-fs-tools.yml
+          - modules/90-accessibility.yml
+          - modules/998-vanilla-cleanup.yml
+          - modules/999-pkg-cleanup.yml
 
-- name: cleanup
-  type: shell
-  commands:
-  - apt autoremove -y
-  - apt clean
+      - name: user
+        type: shell
+        commands:
+          - useradd -m vanilla
+          - usermod -aG sudo vanilla
+          - passwd -d vanilla
+          - mv /etc/gdm/* /etc/gdm3/.
+          - rm -r /etc/gdm
 
-- name: cleanup2
-  type: shell
-  commands:
-    - rm -rf /tmp/*
-    - rm -rf /var/tmp/*
-    - rm -rf /sources
+      - name: system
+        type: shell
+        commands:
+          - cp /boot/vmlinuz-$(ls -1 /usr/lib/modules | head -n1) /efi/vmlinuz
+          - dracut  --no-machineid --kernel-image /efi/vmlinuz --kver "$(ls -1 /usr/lib/modules | head -n1)" --kernel-cmdline 'rw quiet root=live:LABEL=vanilla-orchid console=tty0' --add dmsquash-live --install plymouth --install head --install tail --install less --install lsof /efi/initramfs.img
+          - SYSTEMD_ESP_PATH=/efi bootctl install --no-variables
+
+      - name: cleanup
+        type: shell
+        commands:
+          - apt autoremove -y
+          - apt clean
+          - rm -rf /boot # Kernel and initramfs are part of the efi image, boot isnt used
+          - rm -rf /initrd*
+          - rm -rf /vmlinuz* # why are these even there
+          - rm -rf /FsGuard
+
+      - name: cleanup2
+        type: shell
+        commands:
+          - rm -rf /usr/share/gocode/src
+          - rm -rf /tmp/*
+          - rm -rf /var/tmp/*
+          - rm -rf /sources
+
+finalize:
+  #  - name: efi size
+  #  type: shell-final
+  #  commands:
+  #    - bash ./genimg/scripts/efisize.sh "$FSROOT/efi"
+  #  cwd: "$PROJROOT"
+  - name: genimage stage1
+    type: genimage
+    config: "$PROJROOT/genimg/stage1.conf"
+    rootpath: "$FSROOT"
+    inputpath: "$PROJROOT/genimg/build"
+    outputpath: "$PROJROOT/genimg/stage2"
+  - name: genimage stage2
+    type: genimage
+    config: "$PROJROOT/genimg/stage2.conf"
+    rootpath: "$PROJROOT/genimg/stage2"
+    inputpath: "$PROJROOT/genimg/build"
+    outputpath: "$PROJROOT/genimg/build"
+

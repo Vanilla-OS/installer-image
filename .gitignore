@@ -1,3 +1,6 @@
 Containerfile
 sources/
 downloads/
+.*~undo-tree~
+*~
+#genimg/stage1.conf

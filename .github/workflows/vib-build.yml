@@ -5,10 +5,6 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-env:
-    REGISTRY_USER: ${{ github.actor }}
-    REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
 
   build:
@@ -18,16 +14,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: vanilla-os/vib-gh-action@v0.3.3-1
+    - name: deps
+      run: sudo apt-get install -y mtools xorriso git libconfuse-dev podman buildah slirp4netns uidmap containers-storage
+
+    - name: genimage
+      run: |
+        mkdir deps-build
+        curl -SLO https://github.com/pengutronix/genimage/releases/download/v18/genimage-18.tar.xz
+        tar -xvf genimage-18.tar.xz -C deps-build/
+        cd deps-build/genimage-18/
+        ./configure --prefix=/usr
+        sudo make install
+
+    - uses: vanilla-os/vib-gh-action@v0.8.1
       with:
         recipe: 'recipe.yml'
 
     - name: Build the Docker image
-      run: docker image build -f Containerfile --tag ghcr.io/vanilla-os/installer:main .
-
-    # Push the image to GHCR (Image Registry)
-    - name: Push To GHCR
-      if: github.repository == 'vanilla-os/installer-image'
       run: |
-        docker login ghcr.io -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
-        docker image push "ghcr.io/vanilla-os/installer:main"
+        sudo chmod 777 plugins/*
+        sudo ls -al plugins/
+        sudo su -c "./vib compile --runtime podman"
+        sudo chmod 777 genimg/build/vanilla_installer.iso
+
+    - name: Upload iso
+      uses: actions/upload-artifact@v4
+      with:
+        Name: iso
+        path: genimg/build/vanilla_installer.iso

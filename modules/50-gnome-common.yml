@@ -2,10 +2,3 @@ name: gnome-common
 type: apt
 source:
   packages:
-  - heif-gdk-pixbuf
-  - heif-thumbnailer
-
-  - gnome-user-docs
-  - rygel
-  - webp-pixbuf-loader
-  - yelp
