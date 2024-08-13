@@ -1,13 +1,20 @@
 name: vanilla-installer
-type: dpkg-buildpackage
+type: meson
 source:
   type: git
   url: https://github.com/Vanilla-OS/vanilla-installer.git
-  branch: main
-  commit: latest
+  tag: v2.3.9
   paths:
   - vanilla-installer
 modules:
+  - name: vanilla-installer-etc
+    type: shell
+    commands:
+      - cd /sources/vanilla-installer
+      - mkdir -p /etc/vanilla
+      - mkdir -p etc/vanilla-installer
+      - install -Dm655 recipe.json /etc/vanilla-installer/recipe.json
+      - touch /etc/vanilla/installer.log
   - name: vanilla-installer-deps-install
     type: apt
     source:
@@ -18,6 +25,7 @@ modules:
       - dpkg-dev
       - gettext
       - gir1.2-nma4-1.0
+      - gir1.2-vte-3.91
       - libadwaita-1-dev
       - libjpeg-dev
       - libnm0
@@ -25,6 +33,7 @@ modules:
       - libnma0
       - libnma-gtk4-0
       - libnma-gtk4-dev
+      - libvte-dev
       - make
       - meson
       - python3
@@ -53,3 +62,8 @@ modules:
           - golang-go
           - gcc
           - pkg-config
+      - name: albius vendor deps
+        type: shell
+        commands:
+          - cd /sources/albius
+          - go mod vendor

@@ -1,0 +1,46 @@
+[org.gnome.desktop.screensaver]
+lock-enabled=false
+[org.gnome.desktop.lockdown]
+disable-lock-screen=true
+
+[org.gnome.settings-daemon.plugins.power]
+sleep-inactive-ac-type='nothing'
+sleep-inactive-battery-type='nothing'
+
+[org.gnome.shell]
+favorite-apps = [ 'org.vanillaos.Installer.desktop', 'org.gnome.Epiphany.desktop', 'org.gnome.Photos.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'yelp.desktop' ]
+
+[org.gnome.desktop.app-folders.folders.Utilities]
+apps = ['gnome-abrt.desktop', 'gnome-system-log.desktop', 'nm-connection-editor.desktop', 'org.gnome.baobab.desktop', 'org.gnome.Connections.desktop', 'org.gnome.DejaDup.desktop', 'org.gnome.Dictionary.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.eog.desktop', 'org.gnome.Evince.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.fonts.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Usage.desktop', 'vinagre.desktop', 'yelp.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'gnome-system-monitor.desktop', 'im-config.desktop', 'nvidia-settings.desktop', 'ca.desrt.dconf-editor.desktop', 'org.gnome.Console']
+
+[org.gnome.desktop.background]
+picture-uri = 'file:///usr/share/backgrounds/vanilla/petals_light.webp'
+picture-uri-dark = 'file:///usr/share/backgrounds/vanilla/petals_dark.webp'
+
+[org.gnome.desktop.screensaver]
+picture-uri = 'file:///usr/share/backgrounds/vanilla/petals_light.webp'
+
+[org.gnome.desktop.sound]
+theme-name = 'freedesktop'
+
+[org.gnome.desktop.session]
+session-name="gnome"
+
+[org.gnome.desktop.datetime]
+automatic-timezone = true
+
+[org.gnome.desktop.peripherals.touchpad]
+tap-to-click = true
+click-method = 'default'
+
+[org.gnome.eog.ui:GNOME]
+sidebar=false
+
+[org.gnome.nautilus.icon-view:GNOME]
+default-zoom-level='standard'
+
+[org.gnome.settings-daemon.plugins.power:GNOME]
+power-button-action = 'interactive'
+
+[org.gnome.software:GNOME]
+packaging-format-preference = ['flatpak']

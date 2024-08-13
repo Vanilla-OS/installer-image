@@ -7,6 +7,6 @@ source:
   - espeak-ng
   - mousetweaks
   - orca
-  
+
   - speech-dispatcher
   - speech-dispatcher-espeak-ng

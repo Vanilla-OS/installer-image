@@ -3,8 +3,7 @@ type: dpkg-buildpackage
 source:
   type: git
   url: https://github.com/Vanilla-OS/plymouth-theme-vanilla
-  branch: main
-  commit: latest
+  tag: v1.0.1
   paths:
   - plymouth-theme-vanilla
   - plymouth-theme-vanilla-bgrt

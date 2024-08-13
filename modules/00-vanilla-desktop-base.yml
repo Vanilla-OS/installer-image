@@ -3,8 +3,7 @@ type: dpkg-buildpackage
 source:
   type: git
   url: https://github.com/Vanilla-OS/desktop-base.git
-  branch: main
-  commit: latest
+  tag: v1.0.1
   paths:
   - desktop-base
 modules:
@@ -17,4 +16,3 @@ modules:
     - dh-make
     - librsvg2-bin
     - optipng
-    - podman
