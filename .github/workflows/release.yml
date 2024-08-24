@@ -1,9 +1,9 @@
 name: Vib PR
 
 on:
-  pull_request:
-    branches: [ "main" ]
-
+  push:
+    tags:
+      - "*"
 
 jobs:
 
@@ -39,8 +39,23 @@ jobs:
         sudo su -c "./vib compile --runtime podman"
         sudo chmod 777 genimg/build/vanilla_installer.iso
 
+    - name: generate checksums
+      run: |
+        cd genimg/build
+        sha512sum vanilla_installer.iso > ../../vanilla_installer.iso.DIGESTS
+        sha256sum vanilla_installer.iso > ../../vanilla_installer.iso.DIGESTS
+        md5sum vanilla_installer.iso >> ../../vanilla_installer.iso.DIGESTS
+
     - name: Upload iso
-      uses: actions/upload-artifact@v4
+      if: github.repository == 'Vanilla-OS/installer-image'
+      uses: softprops/action-gh-release@v2
       with:
-        Name: iso
-        Path: genimg/build/vanilla_installer.iso
+        files: |
+          genimg/build/vanilla_installer.iso
+
+    - name: Attest generated files
+      if: github.repository == 'Vanilla-OS/installer-image'
+      id: attest
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: 'genimg/build/vanilla_installer.iso'
