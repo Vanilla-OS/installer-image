@@ -1,8 +1,6 @@
 name: Vib Build
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -33,7 +31,6 @@ jobs:
     - name: Build the Docker image
       run: |
         sudo chmod 777 plugins/*
-        sudo ls -al plugins/
         sudo su -c "./vib compile --runtime podman"
         sudo chmod 777 genimg/build/vanilla_installer.iso
 
