@@ -1,4 +1,4 @@
-name: Vib PR
+name: Release
 
 on:
   push:
