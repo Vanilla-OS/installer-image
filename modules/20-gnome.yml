@@ -17,8 +17,6 @@ source:
   - gnome-bluetooth
   - gnome-color-manager
   - gnome-accessibility-themes
-  #- heif-gdk-pixbuf
-  #- heif-thumbnailer
-  #- webp-pixbuf-loader
+  - gnome-console
 
 
