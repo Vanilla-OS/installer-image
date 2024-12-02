@@ -32,9 +32,9 @@ stages:
       - name: packages-modules
         type: includes
         includes:
+          - gh:Vanilla-OS/core-image:main:modules/01-kernel.yml
           - gh:Vanilla-OS/core-image:main:modules/05-firmware.yml
           - gh:Vanilla-OS/core-image:main:modules/10-input-and-locale.yml
-          - gh:Vanilla-OS/core-image:main:modules/130-kernel.yml
           - gh:Vanilla-OS/core-image:main:modules/50-fs.yml
           - gh:Vanilla-OS/core-image:main:modules/70-compression.yml
           - gh:Vanilla-OS/core-image:main:modules/90-network.yml
