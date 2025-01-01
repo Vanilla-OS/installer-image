@@ -56,6 +56,6 @@ jobs:
     - name: Attest generated files
       if: github.repository == 'Vanilla-OS/installer-image'
       id: attest
-      uses: actions/attest-build-provenance@v1
+      uses: actions/attest-build-provenance@v2
       with:
         subject-path: 'genimg/build/vanilla_installer.iso'
