@@ -28,7 +28,7 @@ jobs:
         sudo make install
 
 
-    - uses: vanilla-os/vib-gh-action@v0.8.1
+    - uses: vanilla-os/vib-gh-action@v1.0.0
       with:
         recipe: 'recipe.yml'
 
